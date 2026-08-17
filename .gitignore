@@ -1,0 +1,6 @@
+# Local, machine-specific files created by the launcher on first run.
+.env
+init/
+
+# macOS
+.DS_Store

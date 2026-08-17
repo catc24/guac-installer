@@ -1,0 +1,86 @@
+name: Build installers
+
+# Builds the Guacamole Installer desktop app for macOS, Windows, and Linux.
+# - Runs on every push/PR to sanity-check the build.
+# - On a version tag (e.g. v1.0.0) it also publishes a GitHub Release with all
+#   the downloadable installers attached.
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write # needed to create the Release on tags
+
+defaults:
+  run:
+    working-directory: installer-app
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-latest
+            name: macOS
+          - os: windows-latest
+            name: Windows
+          - os: ubuntu-latest
+            name: Linux
+    runs-on: ${{ matrix.os }}
+    name: ${{ matrix.name }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: installer-app/package-lock.json
+
+      # Linux needs rpmbuild for the .rpm target.
+      - name: Install Linux packaging tools
+        if: matrix.os == 'ubuntu-latest'
+        run: sudo apt-get update && sudo apt-get install -y rpm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build installers
+        run: npm run dist
+        env:
+          # Skip code signing / notarization (no certs in CI).
+          CSC_IDENTITY_AUTO_DISCOVERY: "false"
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Upload as workflow artifacts for every build (so PRs are testable).
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: guacamole-installer-${{ matrix.name }}
+          path: |
+            installer-app/dist/*.dmg
+            installer-app/dist/*.exe
+            installer-app/dist/*.AppImage
+            installer-app/dist/*.deb
+            installer-app/dist/*.rpm
+          if-no-files-found: warn
+
+      # On a version tag, attach the installers to a GitHub Release.
+      - name: Publish to Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            installer-app/dist/*.dmg
+            installer-app/dist/*.exe
+            installer-app/dist/*.AppImage
+            installer-app/dist/*.deb
+            installer-app/dist/*.rpm
+          fail_on_unmatched_files: false
+          generate_release_notes: true
