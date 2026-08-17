@@ -1,0 +1,53 @@
+# Apache Guacamole - clientless remote desktop gateway
+# This stack runs three containers: a PostgreSQL database, the guacd proxy
+# daemon, and the Guacamole web application. Start it with the launcher for
+# your operating system (see README) - you do not need to run this file by hand.
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: guac-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-guacamole_db}
+      POSTGRES_USER: ${POSTGRES_USER:-guacamole_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is not set - run the launcher, which creates the .env file for you}
+    volumes:
+      # Schema is generated into ./init by the launcher on first run and applied
+      # automatically by Postgres the first time the database is created.
+      - ./init:/docker-entrypoint-initdb.d:ro
+      - guac_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-guacamole_user} -d ${POSTGRES_DB:-guacamole_db}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  guacd:
+    image: guacamole/guacd:${GUAC_VERSION:-1.6.0}
+    container_name: guac-guacd
+    restart: unless-stopped
+
+  guacamole:
+    image: guacamole/guacamole:${GUAC_VERSION:-1.6.0}
+    container_name: guac-web
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      guacd:
+        condition: service_started
+    environment:
+      GUACD_HOSTNAME: guacd
+      POSTGRESQL_HOSTNAME: postgres
+      POSTGRESQL_PORT: 5432
+      POSTGRESQL_DATABASE: ${POSTGRES_DB:-guacamole_db}
+      POSTGRESQL_USERNAME: ${POSTGRES_USER:-guacamole_user}
+      POSTGRESQL_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is not set - run the launcher, which creates the .env file for you}
+      POSTGRESQL_AUTO_CREATE_ACCOUNTS: "true"
+    ports:
+      # Host port 8080 -> Guacamole. Change WEB_PORT in .env to use another port.
+      - "${WEB_PORT:-8080}:8080"
+
+volumes:
+  guac_postgres_data:

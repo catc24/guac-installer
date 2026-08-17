@@ -1,0 +1,63 @@
+appId: com.guacamoleinstaller.app
+productName: Guacamole Installer
+copyright: Copyright © 2025
+
+directories:
+  buildResources: build
+  output: dist
+
+# Only ship what the app needs.
+files:
+  - src/**/*
+  - "!**/*.map"
+
+# The Docker Compose stack template is bundled and copied to the user's data
+# directory on first run. `npm run sync` refreshes ./resources from the repo.
+extraResources:
+  - from: resources
+    to: stack-template
+    filter:
+      - "**/*"
+
+# ---- macOS ----
+mac:
+  category: public.app-category.developer-tools
+  target:
+    - target: dmg
+      arch:
+        - x64
+        - arm64
+  icon: build/icon.png
+  # No Apple Developer signing by default; users right-click > Open once.
+  identity: null
+dmg:
+  title: ${productName}
+
+# ---- Windows ----
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64
+    - target: zip
+      arch:
+        - x64
+  icon: build/icon.png
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: Guacamole Installer
+
+# ---- Linux ----
+linux:
+  category: Utility
+  icon: build/icon.png
+  target:
+    - AppImage
+    - deb
+    - rpm
+  maintainer: Guacamole Installer
+  synopsis: One-click installer for Apache Guacamole

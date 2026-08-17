@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;" />
+    <title>Guacamole Installer</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="hero">
+      <div class="logo" aria-hidden="true">🥑</div>
+      <div>
+        <h1>Guacamole</h1>
+        <p class="tagline">Remote desktop in your browser — installed in one click.</p>
+      </div>
+    </header>
+
+    <main>
+      <!-- Status panel -->
+      <section class="card status">
+        <div class="status-row">
+          <span class="dot" id="dot-docker"></span>
+          <span class="status-label">Docker</span>
+          <span class="status-value" id="val-docker">Checking…</span>
+        </div>
+        <div class="status-row">
+          <span class="dot" id="dot-guac"></span>
+          <span class="status-label">Guacamole</span>
+          <span class="status-value" id="val-guac">Checking…</span>
+        </div>
+      </section>
+
+      <!-- Docker-missing banner -->
+      <section class="card banner hidden" id="docker-banner">
+        <p id="docker-banner-text">Docker is required and was not found.</p>
+        <button class="btn ghost" id="btn-get-docker">Get Docker Desktop</button>
+        <p class="hint">Install it, start it, then click <b>Re-check</b>.</p>
+      </section>
+
+      <!-- Primary action -->
+      <section class="actions">
+        <button class="btn primary big" id="btn-primary" disabled>Checking…</button>
+        <div class="row-buttons">
+          <button class="btn" id="btn-stop" disabled>Stop</button>
+          <button class="btn" id="btn-logs">View logs</button>
+          <button class="btn" id="btn-update" disabled>Update</button>
+          <button class="btn danger" id="btn-uninstall" disabled>Uninstall…</button>
+        </div>
+        <button class="btn ghost small" id="btn-recheck">Re-check</button>
+      </section>
+
+      <!-- Credentials, shown after start -->
+      <section class="card creds hidden" id="creds">
+        <h3>First-time login</h3>
+        <div class="cred-grid">
+          <span>URL</span><a href="#" id="creds-url" class="link"></a>
+          <span>Username</span><code>guacadmin</code>
+          <span>Password</span><code>guacadmin</code>
+        </div>
+        <p class="warn">⚠ Change this password right after logging in (Settings → Preferences).</p>
+      </section>
+
+      <!-- Log console -->
+      <section class="log-wrap">
+        <div class="log-head">
+          <span>Activity</span>
+          <button class="btn ghost small" id="btn-clear-log">Clear</button>
+        </div>
+        <pre id="log" class="log" aria-live="polite"></pre>
+      </section>
+    </main>
+
+    <script src="renderer.js"></script>
+  </body>
+</html>

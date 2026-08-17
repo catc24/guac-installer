@@ -1,0 +1,23 @@
+{
+  "name": "guacamole-installer",
+  "productName": "Guacamole Installer",
+  "version": "1.0.0",
+  "description": "One-click desktop installer for Apache Guacamole, powered by Docker.",
+  "author": "Guacamole Installer",
+  "license": "MIT",
+  "main": "src/main.js",
+  "scripts": {
+    "prestart": "node scripts/sync-resources.js",
+    "start": "electron .",
+    "sync": "node scripts/sync-resources.js",
+    "pack": "npm run sync && electron-builder --dir",
+    "dist": "npm run sync && electron-builder",
+    "dist:mac": "npm run sync && electron-builder --mac",
+    "dist:win": "npm run sync && electron-builder --win",
+    "dist:linux": "npm run sync && electron-builder --linux"
+  },
+  "devDependencies": {
+    "electron": "^33.2.0",
+    "electron-builder": "^25.1.8"
+  }
+}

@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2f7d32"/>
+      <stop offset="1" stop-color="#1b5e20"/>
+    </linearGradient>
+    <linearGradient id="flesh" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#d7e86a"/>
+      <stop offset="1" stop-color="#aac94a"/>
+    </linearGradient>
+  </defs>
+  <rect width="1024" height="1024" rx="220" fill="url(#bg)"/>
+  <!-- avocado body -->
+  <path d="M512 210c-120 0-210 118-210 300 0 168 96 304 210 304s210-136 210-304c0-182-90-300-210-300z" fill="#3d8b40"/>
+  <path d="M512 300c-84 0-150 92-150 220 0 122 70 224 150 224s150-102 150-224c0-128-66-220-150-220z" fill="url(#flesh)"/>
+  <!-- pit -->
+  <circle cx="512" cy="560" r="118" fill="#8a5a2b"/>
+  <circle cx="512" cy="560" r="118" fill="none" stroke="#6f4620" stroke-width="10"/>
+  <!-- highlight -->
+  <ellipse cx="470" cy="520" rx="34" ry="46" fill="#a06a34" opacity="0.6"/>
+</svg>
