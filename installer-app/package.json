@@ -1,7 +1,7 @@
 {
   "name": "guacamole-installer",
   "productName": "Guacamole Installer",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "One-click desktop installer for Apache Guacamole, powered by Docker.",
   "homepage": "https://github.com/catc24/guac-installer",
   "author": {

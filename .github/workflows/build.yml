@@ -66,6 +66,7 @@ jobs:
           name: guacamole-installer-${{ matrix.name }}
           path: |
             installer-app/dist/*.dmg
+            installer-app/dist/*.zip
             installer-app/dist/*.exe
             installer-app/dist/*.AppImage
             installer-app/dist/*.deb
@@ -79,6 +80,7 @@ jobs:
         with:
           files: |
             installer-app/dist/*.dmg
+            installer-app/dist/*.zip
             installer-app/dist/*.exe
             installer-app/dist/*.AppImage
             installer-app/dist/*.deb

@@ -22,11 +22,17 @@ extraResources:
 # ---- macOS ----
 mac:
   category: public.app-category.developer-tools
+  # One universal DMG (runs on Intel + Apple Silicon) instead of two separate
+  # DMGs — avoids the flaky back-to-back `hdiutil detach` failure on GitHub's
+  # arm64 runners. The zip is an hdiutil-free fallback so there's always a
+  # downloadable macOS build even if DMG creation hiccups on CI.
   target:
     - target: dmg
       arch:
-        - x64
-        - arm64
+        - universal
+    - target: zip
+      arch:
+        - universal
   icon: build/icon.png
   # No Apple Developer signing by default; users right-click > Open once.
   identity: null
