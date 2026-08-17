@@ -52,11 +52,12 @@ jobs:
         run: npm ci
 
       - name: Build installers
-        run: npm run dist
+        # --publish never: electron-builder only builds; the Release step below
+        # (softprops) does the publishing, avoiding double-publish conflicts.
+        run: npm run dist -- --publish never
         env:
           # Skip code signing / notarization (no certs in CI).
           CSC_IDENTITY_AUTO_DISCOVERY: "false"
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # Upload as workflow artifacts for every build (so PRs are testable).
       - name: Upload artifacts

@@ -16,7 +16,13 @@ for (const f of files) {
   const src = path.join(repoRoot, f);
   const dst = path.join(resDir, f);
   if (!fs.existsSync(src)) {
-    console.error(`sync-resources: missing ${src}`);
+    // Not fatal: resources/ already contains a committed copy that ships with
+    // the app. Only warn, and fail only if there is no usable copy at all.
+    if (fs.existsSync(dst)) {
+      console.warn(`sync-resources: ${f} not at repo root; using existing resources/${f}`);
+      continue;
+    }
+    console.error(`sync-resources: no source for ${f} (repo root or resources/)`);
     process.exit(1);
   }
   fs.copyFileSync(src, dst);
